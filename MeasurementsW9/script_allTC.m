@@ -6,8 +6,8 @@ clc
 % TC6 tests
 
 TC = [6];
-AP = [2, 5, 8];
-FRAME_SIZE = [124, 524, 600];
+AP = [5];
+FRAME_SIZE = [524];
 
 for i=1:size(TC,2)
  for j=1:size(AP,2)

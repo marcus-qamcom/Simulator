@@ -149,7 +149,7 @@ for ts=1:length(T)
     for v=1:N_veh
         for a=1:size(res_timestamp,2)
             age = T(ts)-res_timestamp(ts,a,v);
-            if (v!=a) && (age > max_age(v,a))
+            if (v~=a) && (age > max_age(v,a)) % Changed from ! to ~ in order to work in matlab.
                max_age(v,a) = age;
             end
         end

@@ -26,7 +26,8 @@ platoon_ant_size = platoon_size * ant_per_veh;
 
 % Get timestamps for when platoon is within valid road sections.
 % Data for the first and last truck (either antenna) is used for this.
-TIME_SLICES = getTimeSlices(TEST_SPEC, "DEF84L", "PlutoL"); % DEF84L is first, Pluto is last vehicle
+% Changed " to ' for use in Matlab
+TIME_SLICES = getTimeSlices(TEST_SPEC, 'DEF84L', 'PlutoL'); % DEF84L is first, Pluto is last vehicle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % All combinations
@@ -77,7 +78,8 @@ RX_SEQ_ALL=cell(dim_size,dim_size);
 
 for i=1:dim_size % RX veh
   for j=1:dim_size % TX veh
-      if idivide(i,ant_per_veh,'ceil') ~= idivide(j,ant_per_veh,'ceil')
+      % Added int32 for support in matlab (not only Octave
+      if idivide(int32(i),ant_per_veh,'ceil') ~= idivide(int32(j),ant_per_veh,'ceil')
         % Calculate numbers for all combinations of antennas where sender and receiver is not on the same vehicle
 
         % Get data for one RX-DX link
@@ -113,7 +115,8 @@ save(file_data,'RX_T_ALL', 'RX_D_ALL', 'RX_RSSI_ALL', 'RX_LAT_ALL', 'RX_LONG_ALL
 ALL_PER = zeros(dim_size, dim_size);
 for i=1:dim_size % RX_veh
   for j=1:dim_size % TX_veh
-      if idivide(i,ant_per_veh,'ceil') ~= idivide(j,ant_per_veh,'ceil')
+      % Added int32 for support in matlab (not only Octave)
+      if idivide(int32(i),ant_per_veh,'ceil') ~= idivide(int32(j),ant_per_veh,'ceil')
          ALL_PER(i,j) = getPER(RX_SEQ_ALL{i,j}, TX_SEQ_ALL{j});
       end
   end

@@ -45,7 +45,8 @@ for ts=start_time:time_step:end_time
   %for i=1:1 % RX_veh
     for j=1:dim_size % TX_veh
     %for j=3:3 % TX_veh
-      if idivide(i,ant_per_veh,'ceil') ~= idivide(j,ant_per_veh,'ceil')
+    % Added int32 in order to work in matlab as well (not only Octave)
+      if idivide(int32(i),ant_per_veh,'ceil') ~= idivide(int32(j),ant_per_veh,'ceil')
         tx_first = find(TX_T_ALL{j}(:)>=from_time,1);
         tx_last = find(TX_T_ALL{j}(:)>to_time,1)-1;
         rx_first = find(RX_T_ALL{i,j}(:)>=from_time,1);
@@ -61,15 +62,19 @@ for ts=start_time:time_step:end_time
         %              tx_first, TX_T_ALL{j}(tx_first), tx_last, TX_T_ALL{j}(tx_last), size(TX_SEQ_tmp,2), ...
         %              rx_first, RX_T_ALL{i,j}(rx_first), rx_last, RX_T_ALL{i,j}(rx_last), size(RX_SEQ_tmp,2));
         %disp(str)
-        if (rx_last>rx_first) && (tx_last>tx_first) 
-          MAVG_PER(i,j, idx) = getPER(RX_SEQ_tmp, TX_SEQ_tmp);
-        else
-          empty_PER = empty_PER+1;
-          MAVG_PER(i,j, idx) = 100;
-        end
-        all_PER = all_PER+1;
-        if tx_first>=tx_last
-          empty_tx = empty_tx + 1;
+        
+        % Need to add guard for empty arguments. (ML)
+        if (~isempty(tx_first) && ~isempty(tx_last) && ~isempty(rx_first) && ~isempty(rx_last))
+            if (rx_last>rx_first) && (tx_last>tx_first) 
+              MAVG_PER(i,j, idx) = getPER(RX_SEQ_tmp, TX_SEQ_tmp);
+            else
+              empty_PER = empty_PER+1;
+              MAVG_PER(i,j, idx) = 100;
+            end
+            all_PER = all_PER+1;
+            if tx_first>=tx_last
+              empty_tx = empty_tx + 1;
+            end
         end
       end
     end
