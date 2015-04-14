@@ -1,4 +1,4 @@
-function platoon = communication_update(platoon, t, Hz, Tx_algo)
+function platoon = communication_update(platoon, t, ts, Hz, Tx_algo, D_right, D_left)
 % platoon = communication_update(platoon, t, Hz, Tx_algo)
 %
 % Sets flag when a vehicle has send it's status information.
@@ -92,4 +92,43 @@ if Tx_algo == 4 % Transmit with all nodes (allowed acc to std.?)
             platoon(n).t_last_msg=t;
         end
     end
+end
+persistent count;
+if isempty(count)
+    count = 1;
+end
+if (Tx_algo == 5) % Transmit on left when turning left and right when turning right, if driving straight, alternate between left and right hand side antennas.
+
+    for n=1:N
+        diff_t=t-platoon(n).t_last_msg;
+        if diff_t>platoon(n).veh_rep_freq % Check if it is time to send again.
+            % if turning left, choose left antenna
+            if ismember(count, D_left)
+                n_node = 1;
+                count=count+1;
+            elseif ismember(count, D_right)
+                n_node = 2;
+                count = count+1;
+            else
+                last_node=platoon(n).send_node;
+                if last_node+1<=platoon(n).N_node
+                    n_node=last_node+1;
+                else
+                    n_node=1;
+                end
+                count = count+1;
+            end
+            % if turning right, choose right antenna
+            
+            % If driving straight apply same algo as "3"
+
+            
+            platoon(n).t_last_msg=t;
+            
+            % inform that info is send out to platoon:
+            platoon(n).send_flag(n_node)=1; % msg send
+            platoon(n).send_node=n_node;
+            platoon(n).send_energy=platoon(n).send_energy+1;
+        end
+    end    
 end

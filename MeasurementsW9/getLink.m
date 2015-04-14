@@ -1,4 +1,4 @@
-function [T D RSSI LAT LONG RX_SEQ lab] = getLink(TEST_SPEC,veh,friendlyname) 
+function [T D RSSI LAT LONG RX_SEQ lab V] = getLink(TEST_SPEC,veh,friendlyname) 
 % Load a communication link specified by:
 %  testcase_no - Test case number
 %  AP - Antenna position number
@@ -42,10 +42,10 @@ DATA_RX = getRawData(testcase_no, AP, veh);
 % Get the data we want from the log file
 if strcmp(veh,friendlyname)
   % Data for a sending vehicle
-  [T RSSI LAT LONG RX_SEQ] = filterData(tu_start, tu_stop, DATA_RX, friendlyname, fs_own);
+  [T RSSI LAT LONG RX_SEQ V] = filterData(tu_start, tu_stop, DATA_RX, friendlyname, fs_own);
 else
   % Data for a receiving vehicle
-  [T RSSI LAT LONG RX_SEQ] = filterData(tu_start, tu_stop, DATA_RX, friendlyname, frame_size);
+  [T RSSI LAT LONG RX_SEQ V] = filterData(tu_start, tu_stop, DATA_RX, friendlyname, frame_size);
 end
 
 if testcase_no ~= '8'
@@ -90,7 +90,7 @@ function DATA = getRawData(testcase_no, AP, veh)
 end
 
 
-function [T RSSI LAT LONG SEQ] = filterData(t1, t2, DATA, fname, flength)
+function [T RSSI LAT LONG SEQ V] = filterData(t1, t2, DATA, fname, flength)
 % FILTERDATA filters data on
 %  time - only packets between t1 and t2 is returned
 %  receiver vehicle - only data received by fname is returned
@@ -113,12 +113,12 @@ function [T RSSI LAT LONG SEQ] = filterData(t1, t2, DATA, fname, flength)
           LAT(tt)=DATA(t).latitude;    % Position at packet reception
           LONG(tt)=DATA(t).longitude;  %       -"-
           SEQ(tt)=DATA(t).seqno;       % Sequence number
+          V(tt)=DATA(t).speed/3.6;     % Speed of vehicle in m/s 
           tt=tt+1;
         end
       end
     end
   end   
-  
   if tt==1
     disp(['Not found: ' fname ' ' num2str(flength) ])
     T(1)=0;
@@ -126,6 +126,7 @@ function [T RSSI LAT LONG SEQ] = filterData(t1, t2, DATA, fname, flength)
     LAT(1)=DATA(1).latitude;
     LONG(1)=DATA(1).longitude;
     SEQ(1)=DATA(1).seqno;
+    V(1)=DATA(1).speed;
     return;
   end
 end

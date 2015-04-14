@@ -20,7 +20,6 @@ file_mavg = sprintf(['Meas_properties/SimData_tc%sAP%sfs%d_mavg_per.mat'], TEST_
 disp(file_data)
 disp(file_per)
 disp(file_mavg)
-
 % Construct file names for output data files. 'plots' and 'desc' directories must exist.
 file_plot_age = sprintf(['plots/SimPlot_tc%sAP%sfs%dhop%dtx%dper%d_age'], TEST_SPEC.testcase_no, TEST_SPEC.AP, TEST_SPEC.framesize, hop, tx, perm);
 file_plot_hist = sprintf(['plots/SimPlot_tc%sAP%sfs%dhop%dtx%dper%d_hist'], TEST_SPEC.testcase_no, TEST_SPEC.AP, TEST_SPEC.framesize, hop, tx, perm);
@@ -30,7 +29,7 @@ file_desc = sprintf(['desc/SimPlot_tc%sAP%sfs%dhop%dtx%dper%d.dat'], TEST_SPEC.t
 % Load pre-calculated PER data
 load(file_per);
 load(file_mavg);
-
+load(file_data);
 % Initialize statistics collection struct.
 STATS = struct('resends', 0, 'resend_received', 0, 'resend_useful', 0);
 
@@ -73,7 +72,7 @@ Tx_algo=tx; % 1 => Transmits with first node
             % 2 => Transmit with random node
             % 3 => Transmit with every second node, simply uses half data rate
             % 4 => Transmit with all nodes (Not allowed acc to std.)
-            % 5 => Tx algorithm... to be implemented...           
+            % 5 => Transmit on left hand side when "turning" left vise verca for right, if going straigh, alternate between left and right hand side antennas.          
            
 
 %% Platoon/vehicles
@@ -128,7 +127,7 @@ end
 % ylabel('Time')
 t=0;
 for ts=1:length(T)
-    platoon = communication_update(platoon, t, Hz, Tx_algo);
+    platoon = communication_update(platoon, t, ts, Hz, Tx_algo,TX_DRIVING_RIGHT_LEAD, TX_DRIVING_LEFT_LEAD);
     %radar_update(platoon) % ego vehicle radar, not implemented
     [platoon STATS] = position_update(platoon,t, sim_time_step, PER_model,algo,ch,age_limit,T(ts), time_step, STATS);
     res_speed(ts,:)=[platoon(:).speed_x];
@@ -143,7 +142,6 @@ for ts=1:length(T)
     
 end
 %hold off
-
 max_age = zeros(N_veh, N_veh);
 for ts=1:length(T)
     for v=1:N_veh

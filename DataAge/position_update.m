@@ -44,8 +44,15 @@ end
 %  - Dim-2 1-M each "row" contains listen data from vehicle 'm' as seen by vehicle 'n'
 %  - Dim-3 1-L each item is listen data from vehicle 'l' as known by vehicle 'm'
 % Note that this data is persistent, i.e. survives between invocations of this function
-persistent LISTEN_AGE = zeros(N, N, N);
-persistent listenAgeLimit = 0.2;        % Age limit for listen data. TODO: Should be argument
+
+persistent LISTEN_AGE 
+if (length(LISTEN_AGE) == 0)
+    LISTEN_AGE = zeros(N, N, N);
+end
+persistent listenAgeLimit
+if (length(listenAgeLimit)==0)
+    listenAgeLimit = 0.2;        % Age limit for listen data. TODO: Should be argument
+end
 % Structure for ETSI Contention-based but also used for reachability-matrix
 ECB_DIST = zeros(N, N); % distance from sender for all receiving nodes
 
@@ -348,7 +355,7 @@ if (algo==7) || (algo==8)
                     % Vehicle i hears vehicle rx...
                     if ts-LISTEN_AGE(rx, i, p_tx) > listenAgeLimit
                        % ...but not vehicle p_tx. Therefore, it could benefit from a resend from rx
-                       reach++;
+                       reach = reach +1;
                        %disp(['Node: ' num2str(rx) ' reaches ' num2str(i)])
                     end
                  end
@@ -412,7 +419,7 @@ if (algo==7) || (algo==8)
                            % Vehicle i hears vehicle rx...
                            if ts-LISTEN_AGE(p_rx_2nd, i, p_tx) > listenAgeLimit
                                % ...but not vehicle p_tx. Therefore, it could benefit from a resend from rx
-                               if !(ts-LISTEN_AGE(p_rx_2nd, i, fw_node) <= listenAgeLimit)
+                               if ~(ts-LISTEN_AGE(p_rx_2nd, i, fw_node) <= listenAgeLimit)
                                     % ...unless the resender also is known to cover this node
                                     % Note: It is possible that there has been several resenders and this is not the first resend
                                     % this node hears. It should really filter for all resenders, but currently only takes the last
@@ -420,7 +427,7 @@ if (algo==7) || (algo==8)
                                     % this is not a problem since sender+resender+receiver only leaves one more node so there can
                                     % not be more than two resends so noone can be left with non-zero wait time after a second resend.
                                    %disp(['Node: ' num2str(p_rx_2nd) ' reaches ' num2str(i)])
-                                   reach++;
+                                   reach = reach +1;
                                end
                            end
                         end

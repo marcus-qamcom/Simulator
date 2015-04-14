@@ -82,7 +82,7 @@ ylim([0 1])
 legend(C,'Location','SouthEast')
 hold off
 
-file_plot_age2 = strcat(file_plot_age, "_c");
+file_plot_age2 = strcat(file_plot_age, '_c');
 
 print (file_plot_age2, '-deps')
 print (file_plot_age2, '-dpng')
