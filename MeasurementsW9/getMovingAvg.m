@@ -20,7 +20,7 @@ min_time = TX_T_ALL{1}(1)
 max_time = TX_T_ALL{1}(size(TX_T_ALL{1},2))
 
 
-window_size = 5;  % 10 sekunder moving average
+window_size = 10;  % 10 sekunder moving average
 start_time = min_time + (window_size/2);
 end_time = max_time - (window_size/2);
 time_step = 0.1;

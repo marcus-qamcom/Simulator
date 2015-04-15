@@ -67,6 +67,8 @@ for i=1:dim_size
 end
 
 % Extract turnvector for first vehicle
+% FREDRIK med nedanstående funktion plockar jag ut index där första
+% fordonet svänger höger, vänster eller kör rakt fram.
 [TX_DRIVING_STRAIGHT_LEAD, TX_DRIVING_LEFT_LEAD, TX_DRIVING_RIGHT_LEAD] = getTurnVector(TX_T_ALL{1}, TX_V_ALL{i}, TX_LAT_ALL{1}, TX_LONG_ALL{1});
 
 disp(['TX T array size:'])

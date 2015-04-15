@@ -1,4 +1,4 @@
-function platoon = communication_update(platoon, t, ts, Hz, Tx_algo, D_right, D_left)
+function platoon = communication_update(platoon, t, Hz, Tx_algo, D_right, D_left)
 % platoon = communication_update(platoon, t, Hz, Tx_algo)
 %
 % Sets flag when a vehicle has send it's status information.
@@ -22,8 +22,6 @@ N=length(platoon);
 for n=1:N
     platoon(n).send_flag(:)=0; % no messages send
 end
-
-
 
 
 if Tx_algo == 1
@@ -93,22 +91,22 @@ if Tx_algo == 4 % Transmit with all nodes (allowed acc to std.?)
         end
     end
 end
-persistent count;
-if isempty(count)
-    count = 1;
-end
+
+
 if (Tx_algo == 5) % Transmit on left when turning left and right when turning right, if driving straight, alternate between left and right hand side antennas.
 
     for n=1:N
         diff_t=t-platoon(n).t_last_msg;
         if diff_t>platoon(n).veh_rep_freq % Check if it is time to send again.
             % if turning left, choose left antenna
-            if ismember(count, D_left)
+            % ceil(t*10) is the index of the turningvector
+            % FREDRIK Can You see a nicer way of doing this?
+            if ismember(ceil(t*10), D_left)
                 n_node = 1;
-                count=count+1;
-            elseif ismember(count, D_right)
+            % if turning right, choose right antenna
+            elseif ismember(ceil(t*10), D_right)
                 n_node = 2;
-                count = count+1;
+            % If driving straight apply same algo as "3"
             else
                 last_node=platoon(n).send_node;
                 if last_node+1<=platoon(n).N_node
@@ -116,13 +114,7 @@ if (Tx_algo == 5) % Transmit on left when turning left and right when turning ri
                 else
                     n_node=1;
                 end
-                count = count+1;
             end
-            % if turning right, choose right antenna
-            
-            % If driving straight apply same algo as "3"
-
-            
             platoon(n).t_last_msg=t;
             
             % inform that info is send out to platoon:
@@ -130,5 +122,5 @@ if (Tx_algo == 5) % Transmit on left when turning left and right when turning ri
             platoon(n).send_node=n_node;
             platoon(n).send_energy=platoon(n).send_energy+1;
         end
-    end    
+    end
 end
