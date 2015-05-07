@@ -1,4 +1,4 @@
-function runTrafficSimRealmeas(tc, ap, fs, hop, tx, perm)
+function runTrafficSimRealmeas(tc, ap, fs, hop, tx, perm, age_limit)
 % Runs DataAge simulation and saves plots and description file with simulation parameters and results.
 % tc - Testcase number 
 % ap - Antenna position
@@ -54,7 +54,7 @@ PER_model=perm;             % 1 = perfect
                             % 3 = tabluar per
                             % 4 = Moving average tabular PER (FW)
 
-age_limit = 0.2;
+% age_limit = 0.2;
 algo=hop; % Algorithm: 
           % 0 = no algorithm
           % 1 = single hop. Repeat each msg once
@@ -135,11 +135,9 @@ for ts=1:length(T)
     for p=1:N_veh
         res_timestamp(ts,:,p)=platoon(p).data_age;
     end
-    
 %    graph_update(h1, platoon,t)
     t=t+sim_time_step; % increase time [sec.]
-   
-    
+
 end
 %hold off
 max_age = zeros(N_veh, N_veh);

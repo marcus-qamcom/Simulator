@@ -51,7 +51,7 @@ if (length(LISTEN_AGE) == 0)
 end
 persistent listenAgeLimit
 if (length(listenAgeLimit)==0)
-    listenAgeLimit = 0.2;        % Age limit for listen data. TODO: Should be argument
+    listenAgeLimit = age_limit;        % Age limit for listen data. TODO: Should be argument
 end
 % Structure for ETSI Contention-based but also used for reachability-matrix
 ECB_DIST = zeros(N, N); % distance from sender for all receiving nodes
