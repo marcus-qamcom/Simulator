@@ -1,4 +1,4 @@
-function runTrafficSimRealmeas(tc, ap, fs, hop, tx, perm, age_limit)
+function runTrafficSimRealmeas(tc, ap, fs, hop, tx, perm, age_limit, num_sim_runs)
 % Runs DataAge simulation and saves plots and description file with simulation parameters and results.
 % tc - Testcase number 
 % ap - Antenna position
@@ -37,12 +37,15 @@ STATS = struct('resends', 0, 'resend_received', 0, 'resend_useful', 0);
 ch_file = '';
 
 %% Time
+agg_cdf_val = [0 0 0];
+sc_tmp = zeros(1,4);
+for simruns = 1:num_sim_runs
 sim_time=max_time-min_time-11; % Total simulation time in seconds.
                                % TODO: -11 pga averaging i 'MeasurementsW9'-koden. Borde fixas i average-scriptet eftersom
                                %       detta hårdkodade värde påverkas av hur lång average-tid man använder.
 
 sim_time_step=0.01;            % Time step in seconds
-T=0:sim_time_step:sim_time;    % time vector
+T=eps:sim_time_step:sim_time;    % time vector
 timeout = 0; %1000;            % max allowed age of data
 
 % intial settings
@@ -117,7 +120,7 @@ end
 if PER_model == 4
    % Rename moving average variable to be consistent to the existing variants
    ch = MAVG_PER;
-   clear MAVG_PER;
+%    clear MAVG_PER;
 end
 
 %% Simulation
@@ -157,11 +160,15 @@ end
 for p=1:N_veh
     sc(p)=platoon(p).send_energy;
 end
-sc=sc/sim_time;
+sc=sc/sim_time
+sc_tmp = sc_tmp+sc;
+cdf_val=makeAgePlot(N_veh,T,res_timestamp,timeout,age_limit, file_plot_age, file_plot_hist)
 
+agg_cdf_val = agg_cdf_val + cdf_val;
 
-cdf_val=makeAgePlot(N_veh,T,res_timestamp,timeout,age_limit, file_plot_age, file_plot_hist);
-
+end % 
+cdf_val = agg_cdf_val/num_sim_runs;
+sc = sc_tmp/num_sim_runs;
 % Create description/results file for this simulation
 sim_description(N_veh,platoon,T,distance, speed, Hz,PER_model,age_limit,algo, Tx_algo, ch_file,sc,cdf_val, file_desc,max_age, STATS);
 
