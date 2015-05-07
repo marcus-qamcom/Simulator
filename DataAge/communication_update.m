@@ -41,7 +41,7 @@ if Tx_algo == 2 % Transmit with random node
     for n=1:N
         n_node=floor(rand*platoon(n).N_node+1);
         diff_t=t-platoon(n).t_last_msg;
-        if diff_t>platoon(n).veh_rep_freq-0.01 % subtract 0.01 in order to get closer to 10Hz;
+        if diff_t>platoon(n).veh_rep_freq
             platoon(n).t_last_msg=t;
             % inform that info is send out to platoon:
             platoon(n).send_flag(n_node)=1; % msg send
@@ -52,11 +52,10 @@ end
 
 
 if Tx_algo == 3 % Transmit with every second node
-    
+tol = 0.098; % Tolerance between each send event.   
     for n=1:N
         diff_t=t-platoon(n).t_last_msg;
-        if diff_t>platoon(n).veh_rep_freq-0.01 % subtract 0.01 in order to get closer to 10Hz
-            
+        if(diff_t>tol) % Changed the if statement to get correct update rate. if diff_t>=platoon(n).veh_rep_freq
             last_node=platoon(n).send_node;
             if last_node+1<=platoon(n).N_node
                 n_node=last_node+1;
@@ -70,7 +69,7 @@ if Tx_algo == 3 % Transmit with every second node
             platoon(n).send_flag(n_node)=1; % msg send
             platoon(n).send_node=n_node;
             platoon(n).send_energy=platoon(n).send_energy+1;
-%             disp(diff_t)
+            
         end
     end
 end
@@ -80,7 +79,7 @@ if Tx_algo == 4 % Transmit with all nodes (allowed acc to std.?)
     
     for n=1:N
         diff_t=t-platoon(n).t_last_msg;
-        if diff_t>platoon(n).veh_rep_freq-0.01 % subtract 0.01 in order to get closer to 10Hz
+        if diff_t>platoon(n).veh_rep_freq
             for n_node=1:platoon(n).N_node
                 
                 % inform that info is send out to platoon:
@@ -98,7 +97,7 @@ if (Tx_algo == 5) % Transmit on left when turning left and right when turning ri
 
     for n=1:N
         diff_t=t-platoon(n).t_last_msg;
-        if diff_t>platoon(n).veh_rep_freq-0.01 % subtract 0.01 in order to get closer to 10Hz % Check if it is time to send again.
+        if diff_t>platoon(n).veh_rep_freq% Check if it is time to send again.
             % if turning left, choose left antenna
             % ceil(t*10) is the index of the turningvector
             % FREDRIK Can You see a nicer way of doing this?
