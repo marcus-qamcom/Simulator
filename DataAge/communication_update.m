@@ -52,10 +52,10 @@ end
 
 
 if Tx_algo == 3 % Transmit with every second node
-tol = 0.098; % Tolerance between each send event.   
+tol = 0.002; % Tolerance between each send event.   
     for n=1:N
         diff_t=t-platoon(n).t_last_msg;
-        if(diff_t>tol) % Changed the if statement to get correct update rate. if diff_t>=platoon(n).veh_rep_freq
+        if(diff_t>(platoon(n).veh_rep_freq-tol)) % Changed the if statement to get correct update rate. if diff_t>=platoon(n).veh_rep_freq
             last_node=platoon(n).send_node;
             if last_node+1<=platoon(n).N_node
                 n_node=last_node+1;
