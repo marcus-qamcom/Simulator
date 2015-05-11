@@ -37,8 +37,9 @@ STATS = struct('resends', 0, 'resend_received', 0, 'resend_useful', 0);
 ch_file = '';
 
 %% Time
-agg_cdf_val = [0 0 0];
+agg_cdf_val =[0 0 0];
 sc_tmp = zeros(1,4);
+T_tmp = 0;
 for simruns = 1:num_sim_runs
 sim_time=max_time-min_time-11; % Total simulation time in seconds.
                                % TODO: -11 pga averaging i 'MeasurementsW9'-koden. Borde fixas i average-scriptet eftersom
@@ -160,13 +161,14 @@ end
 for p=1:N_veh
     sc(p)=platoon(p).send_energy;
 end
-sc=sc/sim_time
+sc=sc/sim_time;
 sc_tmp = sc_tmp+sc;
-cdf_val=makeAgePlot(N_veh,T,res_timestamp,timeout,age_limit, file_plot_age, file_plot_hist)
+T_tmp = T_tmp+T;
 
-agg_cdf_val = agg_cdf_val + cdf_val;
-
+agg_cdf_val=agg_cdf_val+makeAgePlot(N_veh,T,res_timestamp,timeout,age_limit, file_plot_age, file_plot_hist);
 end % 
+
+
 cdf_val = agg_cdf_val/num_sim_runs;
 sc = sc_tmp/num_sim_runs;
 % Create description/results file for this simulation
