@@ -13,7 +13,7 @@ idxs=t(1:end-1);
 % Det Degermanska trolleriet... och det är lätt!!!
 E = E-mean(E);
 N = N-mean(N);
-V = V/3.6;
+% V = V/3.6;
 
 % filter to get good acceleration (Kalman stuff)
 % init state
