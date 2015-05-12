@@ -94,14 +94,16 @@ end
 
 
 if (Tx_algo == 5) % Transmit on left when turning left and right when turning right, if driving straight, alternate between left and right hand side antennas.
-
+tol = 0.002; % Tolerance between each send event. 
     for n=1:N
         diff_t=t-platoon(n).t_last_msg;
-        if diff_t>platoon(n).veh_rep_freq% Check if it is time to send again.
+        if(diff_t>(platoon(n).veh_rep_freq-tol)) % Changed the if statement to get correct update rate. 
             % if turning left, choose left antenna
             % ceil(t*10) is the index of the turningvector
             % FREDRIK Can You see a nicer way of doing this?
-            if ismember(ceil(t*10), D_left)
+            % TODO: Check how many times in left, right and straight.
+            %       
+            if ismember(ceil(t*10), D_left) % Does n_node == 1 represents transmission on the left hand side?
                 n_node = 1;
             % if turning right, choose right antenna
             elseif ismember(ceil(t*10), D_right)
