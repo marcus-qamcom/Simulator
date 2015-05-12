@@ -32,10 +32,8 @@ load(file_mavg);
 load(file_data);
 % Initialize statistics collection struct.
 STATS = struct('resends', 0, 'resend_received', 0, 'resend_useful', 0);
-
 % File name for PER, only used for some PER models.
 ch_file = '';
-
 %% Time
 agg_cdf_val =[0 0 0];
 sc_tmp = zeros(1,4);
