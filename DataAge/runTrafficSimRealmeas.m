@@ -129,7 +129,7 @@ end
 % ylabel('Time')
 t=0;
 for ts=1:length(T)
-    platoon = communication_update(platoon, t, Hz, Tx_algo,TX_DRIVING_RIGHT_LEAD, TX_DRIVING_LEFT_LEAD);
+    platoon = communication_update(platoon, t, Hz, Tx_algo,TX_DRIVING_RIGHT_LEAD, TX_DRIVING_LEFT_LEAD, TX_T_ALL);
     %radar_update(platoon) % ego vehicle radar, not implemented
     [platoon STATS] = position_update(platoon,t, sim_time_step, PER_model,algo,ch,age_limit,T(ts), time_step, STATS);
     res_speed(ts,:)=[platoon(:).speed_x];
