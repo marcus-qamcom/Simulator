@@ -1,4 +1,4 @@
-function platoon = communication_update(platoon, t, Hz, Tx_algo, D_right, D_left)
+function platoon = communication_update(platoon, t, Hz, Tx_algo, D_right, D_left, tx_time_all)
 % platoon = communication_update(platoon, t, Hz, Tx_algo)
 %
 % Sets flag when a vehicle has send it's status information.
@@ -102,27 +102,31 @@ tol = 0.002; % Tolerance between each send event.
             % ceil(t*10) is the index of the turningvector
             % FREDRIK Can You see a nicer way of doing this?
             % TODO: Check how many times in left, right and straight.
-            %       
-            if ismember(ceil(t*10), D_left) % Does n_node == 1 represents transmission on the left hand side?
-                n_node = 1;
-            % if turning right, choose right antenna
-            elseif ismember(ceil(t*10), D_right)
-                n_node = 2;
-            % If driving straight apply same algo as "3"
-            else
-                last_node=platoon(n).send_node;
-                if last_node+1<=platoon(n).N_node
-                    n_node=last_node+1;
+            %  
+            tmp_idx = find(tx_time_all{1}(:)>=t & tx_time_all{1}(:)<t+0.05);
+            if ~isempty(tmp_idx)
+                idx = tmp_idx(1);
+                if ismember(idx, D_left) % Does n_node == 1 represents transmission on the left hand side?
+                    n_node = 1;
+                % if turning right, choose right antenna
+                elseif ismember(idx, D_right)
+                    n_node = 2;
+                % If driving straight apply same algo as "3"
                 else
-                    n_node=1;
+                    last_node=platoon(n).send_node;
+                    if last_node+1<=platoon(n).N_node
+                        n_node=last_node+1;
+                    else
+                        n_node=1;
+                    end
                 end
+                platoon(n).t_last_msg=t;
+
+                % inform that info is send out to platoon:
+                platoon(n).send_flag(n_node)=1; % msg send
+                platoon(n).send_node=n_node;
+                platoon(n).send_energy=platoon(n).send_energy+1;
             end
-            platoon(n).t_last_msg=t;
-            
-            % inform that info is send out to platoon:
-            platoon(n).send_flag(n_node)=1; % msg send
-            platoon(n).send_node=n_node;
-            platoon(n).send_energy=platoon(n).send_energy+1;
         end
     end
 end
