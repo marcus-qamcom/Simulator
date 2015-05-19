@@ -4,7 +4,7 @@ function runTrafficSimRealmeas(tc, ap, fs, hop, tx, perm, age_limit, num_sim_run
 % ap - Antenna position
 % fs - Frame size
 % hop - multihop algorithm
-% tx - send algorithm
+% tx - send algorithm 
 % perm - Packer error rate (PER) model
 %
 % Alternatives for hop, tx, and perm are documented in code below
